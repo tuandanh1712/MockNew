@@ -36,18 +36,18 @@ QVariant ListVideoModel::data(const QModelIndex &index, int role) const
     if ( !index.isValid() )
         return QVariant();
 
-    ModelMedia1* songs = m_listVideo.at(index.row());
+    CommonModel* songs = m_listVideo.at(index.row());
     if ( role == TitleVideo ){
-        return songs->m_title;
+        return songs->getTitle();
     }
     else if ( role == AlbumVideo )
-        return songs->m_album;
+        return songs->getAlbum();
     else if ( role == ArtistVideo )
-        return songs->m_artist;
+        return songs->getArtist();
     else if(role==SourceVideo)
-        return songs->m_source;
+        return songs->getSource();
     else if(role==IndexVideo)
-        return songs->m_index;
+        return songs->getIndex();
     else
         return QVariant();
 }
@@ -71,7 +71,7 @@ void ListVideoModel::deletelVideoModel(int index)
 
 }
 
-void ListVideoModel::addVideoModel(ModelMedia1 *data)
+void ListVideoModel::addVideoModel(CommonModel *data)
 {
     beginInsertRows (QModelIndex(),rowCount (QModelIndex()),rowCount (QModelIndex()));
     m_listVideo.append (data);

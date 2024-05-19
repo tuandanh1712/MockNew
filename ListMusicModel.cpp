@@ -2,7 +2,7 @@
 
 #include "qimage.h"
 
-ListMusicModel::ListMusicModel(QVector<ModelMedia*> &songList, QObject *parent)
+ListMusicModel::ListMusicModel(QVector<CommonModel*> &songList, QObject *parent)
     : QAbstractListModel(parent),m_listSong()
 {
 
@@ -40,18 +40,18 @@ QVariant ListMusicModel::data(const QModelIndex &index, int role) const
     if ( !index.isValid() )
         return QVariant();
 
-    ModelMedia* songs = m_listSong.at(index.row());
+    CommonModel* songs = m_listSong.at(index.row());
     if ( role == TitleSongs ){
-        return songs->m_title;
+        return songs->getTitle();
     }
     else if ( role == AlbumSongs )
-        return songs->m_album;
+        return songs->getAlbum();
     else if ( role == ArtistSongs )
-        return songs->m_artist;
+        return songs->getArtist();
     else if(role==SourceSongs)
-        return songs->m_source;
+        return songs->getSource();
     else if(role==IndexSongs)
-        return songs->m_index;
+        return songs->getIndex();
     else
         return QVariant();
 }
@@ -75,7 +75,7 @@ void ListMusicModel::deletelMusicModel(int index)
     endRemoveRows();
 }
 
-void ListMusicModel::addMusicModel(ModelMedia *data)
+void ListMusicModel::addMusicModel(CommonModel *data)
 {
     beginInsertRows (QModelIndex(),rowCount (QModelIndex()),rowCount (QModelIndex()));
     m_listSong.append (data);

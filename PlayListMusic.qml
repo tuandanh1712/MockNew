@@ -60,7 +60,7 @@ Rectangle{
                         }
                     }
                 }
-                model:mediaObj.favoriteSongs
+                model:mediaCtrl.favoriteSongs
                 delegate:
                     Rectangle{
 
@@ -88,10 +88,13 @@ Rectangle{
                             isPlaying=true
                             isVideo=false
                             isShowCoverArt=false
+                            isFavorit=true
                             mediaCtrl.setFavoritMusicPlay()
                             mediaCtrl.setSourceFavor(SourceSongs);
-                            mediaCtrl.playFavorit(IndexSongs)
-                            mediaCtrl.setIndexFavor(IndexSongs)
+                            mediaCtrl.playFavorit(index)
+                            mediaCtrl.setIndexFavor(index)
+                            controllerScreenID.textMusic=mediaCtrl.getFavoritTitleArtits(index)
+
 
                         }
                     }
@@ -113,56 +116,19 @@ Rectangle{
                         }
 
                     }
+                    TButton{
+                        id:deleteButton
+                        sourceIC: !colorCheck? "qrc:/assets/images/trash.png":"qrc:/assets/images/garbage.png"
+                        anchors.right: parent.right
+                        anchors.rightMargin: 15
+                        width: 20
+                        height: 20
+                        onPressed:{
+                            // mediaCtrl.deletelMusic(index)
+                        }
 
-                    // Row{
-                    //     spacing: 10
-                    //     anchors.verticalCenter: parent.verticalCenter
-                    //     anchors.right: parent.right
-                    //     anchors.rightMargin: 15
+                    }
 
-                    //     ControllerButton{
-                    //         id:addFavoriteButton
-                    //         imgSource: "qrc:/Icons/favorite.png"
-                    //         width: 20
-                    //         height: 20
-                    //         radius: 20
-                    //         visible: false
-                    //     }
-                    //     ControllerButton{
-                    //         id:deleteButton
-                    //         imgSource: "qrc:/Icons/delete_.png"
-                    //         width: 20
-                    //         height: 20
-                    //         radius: 20
-                    //         visible: false
-                    //         onButtonCliked: {
-                    //             mediaObj.removeMusic(index)
-
-                    //         }
-
-                    //     }
-                    //     ControllerButton{
-                    //         id:hideButton
-
-                    //         height: 20
-                    //         width: 20
-                    //         radius: 10
-
-                    //         Image{
-                    //             height: 10
-                    //             width: 10
-                    //             source: "qrc:/Icons/drag_handle_FILL0_wght200_GRAD200_opsz48.png"
-                    //             anchors.centerIn: parent
-                    //             fillMode: Image.PreserveAspectFit
-                    //         }
-
-                    //         onButtonCliked: {
-                    //             addFavoriteButton.visible =!addFavoriteButton.visible
-                    //             deleteButton.visible=!deleteButton.visible
-                    //         }
-                    //     }
-
-                    // }
 
                 }
 

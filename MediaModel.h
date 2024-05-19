@@ -1,6 +1,7 @@
 #ifndef MEDIACONTROL_H
 #define MEDIACONTROL_H
 
+#include "Favorite.h"
 #include "ListMusicModel.h"
 #include "ListVideoModel.h"
 #include "qcoreapplication.h"
@@ -23,6 +24,8 @@ public:
     MediaController &operator=(const MediaController &) = delete;
     MediaController &operator=(MediaController &&) = delete;
     ~MediaController();
+
+
     Q_PROPERTY(QSortFilterProxyModel* proxyVideo READ proxyVideo WRITE setproxyVideo NOTIFY proxyVideoChanged FINAL)
     Q_PROPERTY(ListMusicModel* musicListModel READ musicListModel WRITE setMusicListModel NOTIFY musicListModelChanged FINAL)
     Q_PROPERTY(ListVideoModel* videoListModel READ videoListModel WRITE setVideoListModel NOTIFY videoListModelChanged FINAL)
@@ -34,6 +37,8 @@ public:
     Q_PROPERTY(QStringList listSongPath READ listSongPath WRITE setListSongPath NOTIFY listSongPathChanged FINAL)
     Q_PROPERTY(QStringList listVideoPath READ listVideoPath WRITE setListVideoPath NOTIFY listVideoPathChanged FINAL)
     Q_PROPERTY(QAbstractVideoSurface* videoSurface READ videoSurface WRITE setVideoSurface NOTIFY videoSurfaceChanged FINAL)
+    Q_PROPERTY(Favorite* favoriteSongs READ favoriteSongs WRITE setFavoriteSongs NOTIFY favoriteSongsChanged)
+    Q_PROPERTY(int indexFavor READ indexFavor WRITE setIndexFavor NOTIFY indexFavorChanged)
 
     QAbstractVideoSurface *videoSurface() const;
     Q_INVOKABLE  void setIndex(int newIndex);
@@ -90,6 +95,16 @@ public:
     QSortFilterProxyModel* proxyVideo() const;
     void setproxyVideo( QSortFilterProxyModel *newProxyVideo);
 
+    Favorite *favoriteSongs() const;
+    void setFavoriteSongs(Favorite *newFavoriteSongs);
+
+    int indexFavor() const;
+    Q_INVOKABLE  void setIndexFavor(int newIndexFavor);
+    Q_INVOKABLE void addToFavorite(int index);
+    Q_INVOKABLE void setFavoritMusicPlay();
+    Q_INVOKABLE void setSourceFavor(QString source);
+    Q_INVOKABLE void playFavorit(int index);
+    Q_INVOKABLE QString getFavoritTitleArtits(int index);
 public slots:
 
     void setIndexMediaChanged();
@@ -120,15 +135,19 @@ signals:
 
     void proxyVideoChanged();
 
+    void favoriteSongsChanged();
+
+    void indexFavorChanged();
+
 private:
     QMediaPlayer* player ;
 
-    QVector<ModelMedia*> musicModel;
+    QVector<CommonModel*> musicModel;
     ListMusicModel *m_musicListModel = nullptr;
     QMediaPlaylist *playMusicList;
 
 
-    QVector<ModelMedia1*> videoModel;
+    QVector<CommonModel*> videoModel;
     ListVideoModel *m_videoListModel = nullptr;
     QMediaPlaylist *playVideoList;
     int m_index;
@@ -145,6 +164,10 @@ private:
 
     QImage m_currentCoverArt;
     QSortFilterProxyModel* m_proxyVideo=nullptr;
+    Favorite *m_favoriteSongs = nullptr;
+    int m_indexFavor;
+    QMediaPlaylist *playMusicFavorit;
+
 };
 
 #endif

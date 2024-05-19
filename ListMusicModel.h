@@ -9,6 +9,7 @@
 #include <QDebug>
 #include <QAbstractListModel>
 #include <QBuffer>
+#include "CommonModel.h"
 #include "attachedpictureframe.h"
 #include "fileref.h"
 #include "id3v2tag.h"
@@ -16,25 +17,12 @@
 #include <taglib/tag.h>
 
 
-class ModelMedia
-{
-public:
-    ModelMedia(const QString &m_source,  const QString &m_title,const QString &m_artist,const QString &m_album,const int m_index):
-        m_source(m_source),m_title(m_title),m_artist(m_artist),m_album(m_album),m_index(m_index)
-    {}
-    QString m_source;
-    QString m_title;
-    QString m_artist;
-    QString m_album;
-    int m_index;
-};
-
 
 class ListMusicModel : public QAbstractListModel
 {
     Q_OBJECT
 public:
-    explicit ListMusicModel(QVector<ModelMedia*> &songList,QObject *parent = nullptr);
+    explicit ListMusicModel(QVector<CommonModel*> &songList,QObject *parent = nullptr);
     ListMusicModel();
     enum Songs {
         TitleSongs = Qt::UserRole+1,
@@ -50,13 +38,13 @@ public:
     QVariant data( const QModelIndex& index, int role = Qt::DisplayRole ) const override;
     QHash<int, QByteArray> roleNames() const override;
     void deletelMusicModel(int index);
-    void addMusicModel(ModelMedia *data);
+    void addMusicModel(CommonModel *data);
     QImage imageForTag(QString mediasource);
 signals:
 
 
 private:
-    QVector<ModelMedia*> m_listSong;
+    QVector<CommonModel*> m_listSong;
 
 };
 

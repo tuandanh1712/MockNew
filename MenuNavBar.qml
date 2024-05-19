@@ -89,7 +89,7 @@ Rectangle{
                 id:mp4ID
                 font.pixelSize: 30
                 color: colorText
-                text: qsTr("Video")
+                text: qsTr("Video")+Translator.updateText
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
                 MouseArea{
@@ -114,7 +114,7 @@ Rectangle{
                 id:playListID
                 font.pixelSize: 30
                 color: colorText
-                text: qsTr("PlayList")
+                text: qsTr("PlayList")+Translator.updateText
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
                 MouseArea{

@@ -175,6 +175,9 @@ Rectangle{
                             height: 20
                             radius: 20
                             visible: false
+                            onPressed: {
+                                mediaCtrl.addToFavorite(index);
+                            }
                         }
                         TButton{
                             id:deleteButton
@@ -185,7 +188,6 @@ Rectangle{
                             visible: false
                             onPressed: {
                                 mediaCtrl.deletelMusic(index)
-
                             }
 
                         }
@@ -203,11 +205,12 @@ Rectangle{
                                 anchors.centerIn: parent
                                 fillMode: Image.PreserveAspectFit
                             }
-
                             onPressed: {
+
                                 addFavoriteButton.visible =!addFavoriteButton.visible
                                 deleteButton.visible=!deleteButton.visible
                             }
+
                         }
 
                     }

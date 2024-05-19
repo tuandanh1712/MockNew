@@ -9,6 +9,8 @@ include(dependencies/dependencies.pri)
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 INCLUDEPATH += /usr/include/taglib
 SOURCES += \
+        CommonModel.cpp \
+        Favorite.cpp \
         ListMusicModel.cpp \
         ListVideoModel.cpp \
         MediaModel.cpp \
@@ -32,6 +34,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 TRANSLATIONS += transvn.ts\
              += transen.ts
 HEADERS += \
+    CommonModel.h \
+    Favorite.h \
     ListMusicModel.h \
     ListVideoModel.h \
     MediaModel.h \

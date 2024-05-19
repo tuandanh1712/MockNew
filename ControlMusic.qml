@@ -44,6 +44,11 @@ Rectangle{
                     visible: false
                 }
                 Text{
+                    id:textFavorit
+
+                    visible: false
+                }
+                Text{
                     id: textMediaID
                     width: parent.width
                     text:isVideo?textVideo.text: textMusic.text
@@ -174,8 +179,14 @@ Rectangle{
                         if(isVideo){
                             controllerScreenID.textVideo=mediaCtrl.getVideoTitleArtist(mediaCtrl.indexVideo)
 
-                        }else{
-                            controllerScreenID.textMusic=mediaCtrl.getMusicTitleArtist(mediaCtrl.index)
+                        }else {
+                            if(isFavorit){
+                                console.log("d",mediaCtrl.indexFavor)
+                                controllerScreenID.textMusic=mediaCtrl.getFavoritTitleArtits(mediaCtrl.indexFavor);
+                            }else{
+
+                                controllerScreenID.textMusic=mediaCtrl.getMusicTitleArtist(mediaCtrl.index)
+                            }
 
                         }
                     }
@@ -202,8 +213,14 @@ Rectangle{
                         if(isVideo){
                             controllerScreenID.textVideo=mediaCtrl.getVideoTitleArtist(mediaCtrl.indexVideo)
 
-                        }else{
-                            controllerScreenID.textMusic=mediaCtrl.getMusicTitleArtist(mediaCtrl.index)
+                        }else {
+                            if(isFavorit){
+                                console.log("d",mediaCtrl.indexFavor)
+                                controllerScreenID.textMusic=mediaCtrl.getFavoritTitleArtits(mediaCtrl.indexFavor);
+                            }else{
+
+                                controllerScreenID.textMusic=mediaCtrl.getMusicTitleArtist(mediaCtrl.index)
+                            }
 
                         }
                     }

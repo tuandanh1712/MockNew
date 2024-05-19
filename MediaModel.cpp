@@ -10,9 +10,11 @@ MediaController::MediaController( QObject *parent)
     player=new QMediaPlayer;
     playMusicList = new QMediaPlaylist;
     playVideoList= new QMediaPlaylist;
+    playMusicFavorit=new QMediaPlaylist;
     m_proxyVideo=new QSortFilterProxyModel;
     m_musicListModel=new ListMusicModel;
     m_videoListModel=new ListVideoModel;
+    m_favoriteSongs=new Favorite;
     player->setVolume(0);
 
     connect(player, &QMediaPlayer::volumeChanged, this, &MediaController::volumeChanged);
@@ -20,6 +22,7 @@ MediaController::MediaController( QObject *parent)
     connect(player,&QMediaPlayer::durationChanged, this, &MediaController::durationChanged);
     connect(playMusicList,&QMediaPlaylist::currentIndexChanged,this,&MediaController::setIndexMediaChanged);
     connect(playVideoList,&QMediaPlaylist::currentIndexChanged,this,&MediaController::setIndexMediaChanged);
+    connect(playMusicFavorit,&QMediaPlaylist::currentIndexChanged,this,&MediaController::setIndexMediaChanged);
     getMusicLocal();
     getVideoLocal();
 }
@@ -35,6 +38,8 @@ MediaController::~MediaController()
     delete  playVideoList;
     delete m_musicListModel;
     delete m_videoListModel;
+    delete playMusicFavorit;
+    delete m_favoriteSongs;
 }
 
 
@@ -62,12 +67,18 @@ void MediaController::getFolderMusic()
         {
             continue;
         }
-        QString m_source=fullPath.toStdString().c_str();
-        QString m_title=QString::fromStdString(tag->title().to8Bit(true));
-        QString m_artist=QString::fromStdString(tag->artist().to8Bit(true));
-        QString m_album=QString::fromStdString(tag->album().to8Bit(true));
-        int m_index=i;
-        ModelMedia* song = new ModelMedia(m_source,m_title,m_artist,m_album,m_index);
+        // QString m_source=fullPath.toStdString().c_str();
+        // QString m_title=QString::fromStdString(tag->title().to8Bit(true));
+        // QString m_artist=QString::fromStdString(tag->artist().to8Bit(true));
+        // QString m_album=QString::fromStdString(tag->album().to8Bit(true));
+        // int m_index=i;
+        CommonModel* song = new CommonModel;
+        song->setSource(fullPath.toStdString().c_str());
+        song->setTitle(QString::fromStdString(tag->title().to8Bit(true)));
+        song->setArtist(QString::fromStdString(tag->artist().to8Bit(true)));
+        song->setAlbum(QString::fromStdString(tag->album().to8Bit(true)));
+        song->setIndex(i);
+        musicModel.push_back(song);
         m_musicListModel->addMusicModel (song);
         content.push_back(QMediaContent(QUrl::fromLocalFile(fullPath)));
     }
@@ -93,13 +104,14 @@ QVariantList MediaController::getMusicLocal()
         {
             continue;
         }
-        QString m_source=(directory.path()+"/" + f).toLocal8Bit().data();
-        QString m_title=QString::fromStdString(tag->title().to8Bit(true));
-        QString m_artist=QString::fromStdString(tag->artist().to8Bit(true));
-        QString m_album=QString::fromStdString(tag->album().to8Bit(true));
-        int m_index=i;
-        ModelMedia* song = new ModelMedia(m_source,m_title,m_artist,m_album,m_index);
+        CommonModel* song = new CommonModel;
+        song->setSource((directory.path()+"/" + f).toLocal8Bit().data());
+        song->setTitle(QString::fromStdString(tag->title().to8Bit(true)));
+        song->setArtist(QString::fromStdString(tag->artist().to8Bit(true)));
+        song->setAlbum(QString::fromStdString(tag->album().to8Bit(true)));
+        song->setIndex(i);
         m_musicListModel->addMusicModel (song);
+        musicModel.push_back(song);
     }
     playMusicList->addMedia(content);
     return musicList;
@@ -134,12 +146,12 @@ void MediaController::getFolderVideo()
             {
                 continue;
             }
-            QString m_source=fullPath.toStdString().c_str();
-            QString m_title=QString::fromStdString(tag->title().to8Bit(true));
-            QString m_artist=QString::fromStdString(tag->artist().to8Bit(true));
-            QString m_album=QString::fromStdString(tag->album().to8Bit(true));
-            int m_index=i;
-            ModelMedia1* video = new ModelMedia1(m_source,m_title,m_artist,m_album,m_index);
+            CommonModel* video = new CommonModel;
+            video->setSource(fullPath.toStdString().c_str());
+            video->setTitle(QString::fromStdString(tag->title().to8Bit(true)));
+            video->setArtist(QString::fromStdString(tag->artist().to8Bit(true)));
+            video->setAlbum(QString::fromStdString(tag->album().to8Bit(true)));
+            video->setIndex(i);
             m_videoListModel->addVideoModel(video);
             // videoModel .push_back(video);
             content.push_back(QMediaContent(QUrl::fromLocalFile(fullPath)));
@@ -172,14 +184,14 @@ QVariantList MediaController::getVideoLocal()
         {
             continue;
         }
-        QString m_source=(directory.path()+"/" + f).toLocal8Bit().data();
-        QString m_title=QString::fromStdString(tag->title().to8Bit(true));
-        QString m_artist=QString::fromStdString(tag->artist().to8Bit(true));
-        QString m_album=QString::fromStdString(tag->album().to8Bit(true));
-        int m_index=i;
-        ModelMedia1* video = new ModelMedia1(m_source,m_title,m_artist,m_album,m_index);
-        // videoModel .push_back(video);
+        CommonModel* video = new CommonModel;
+        video->setSource((directory.path()+"/" + f).toLocal8Bit().data());
+        video->setTitle(QString::fromStdString(tag->title().to8Bit(true)));
+        video->setArtist(QString::fromStdString(tag->artist().to8Bit(true)));
+        video->setAlbum(QString::fromStdString(tag->album().to8Bit(true)));
+        video->setIndex(i);
         m_videoListModel->addVideoModel(video);
+        // videoModel .push_back(video);
     }
     // m_videoListModel=new ListVideoModel(videoModel);
     // m_proxyVideo->setSourceModel(m_videoListModel);
@@ -308,12 +320,14 @@ void MediaController::previousMedia()
 {
     playMusicList->previous();
     playVideoList->previous();
+    playMusicFavorit->previous();
 
 }
 void MediaController::nextMedia()
 {
     playMusicList->next();
     playVideoList->next();
+    playMusicFavorit->next();
 
 }
 void MediaController::seekForward()
@@ -404,6 +418,7 @@ void MediaController::setIndexMediaChanged()
 {
     setIndex(playMusicList->currentIndex());
     setIndexVideo(playVideoList->currentIndex());
+    setIndexFavor(playMusicFavorit->currentIndex());
     QModelIndex index = m_musicListModel->index(m_index,0);
     QVariant data = m_musicListModel->data(index,m_musicListModel->ListMusicModel::Songs::SourceSongs);
     QString source= data.toString();
@@ -416,6 +431,19 @@ QString MediaController::getMusicTitleArtist(int indexSong)
     QModelIndex index= m_musicListModel->index(indexSong,0);
     QVariant data= m_musicListModel->data(index,m_musicListModel->Songs::TitleSongs);
     QVariant data2= m_musicListModel->data(index,m_musicListModel->Songs::ArtistSongs);
+    QString tilteSong= data.toString();
+    QString artist= data2.toString();
+    qDebug()<<tilteSong+"-"+artist;
+    return tilteSong+"-"+artist;
+
+
+}
+QString MediaController::getFavoritTitleArtits(int indexSong)
+{
+    qDebug()<<"favorit next"<<indexSong;
+    QModelIndex index= m_favoriteSongs->index(indexSong,0);
+    QVariant data= m_favoriteSongs->data(index,m_favoriteSongs->Songs::TitleSongs);
+    QVariant data2= m_favoriteSongs->data(index,m_favoriteSongs->Songs::ArtistSongs);
     QString tilteSong= data.toString();
     QString artist= data2.toString();
     qDebug()<<tilteSong+"-"+artist;
@@ -545,4 +573,75 @@ void MediaController::setproxyVideo(QSortFilterProxyModel *newProxyVideo)
         return;
     m_proxyVideo = newProxyVideo;
     emit proxyVideoChanged();
+}
+
+Favorite *MediaController::favoriteSongs() const
+{
+    return m_favoriteSongs;
+}
+
+void MediaController::setFavoriteSongs(Favorite *newFavoriteSongs)
+{
+    if (m_favoriteSongs == newFavoriteSongs)
+        return;
+    m_favoriteSongs = newFavoriteSongs;
+    emit favoriteSongsChanged();
+}
+
+int MediaController::indexFavor() const
+{
+    return m_indexFavor;
+}
+
+void MediaController::setIndexFavor(int newIndexFavor)
+{
+    if (m_indexFavor == newIndexFavor)
+        return;
+    if(newIndexFavor>playMusicFavorit->mediaCount()-1)
+    {
+
+        m_indexFavor=newIndexFavor-playMusicFavorit->mediaCount();
+
+    }
+    else if(newIndexFavor<0)
+    {
+        m_indexFavor=newIndexFavor-playMusicFavorit->mediaCount()-1;
+
+    }
+    else{
+        m_indexFavor = newIndexFavor;
+    }
+
+    emit indexFavorChanged();
+}
+
+void MediaController::addToFavorite(int index)
+{
+    // Lấy thông tin về bài hát từ index được chọ;
+    CommonModel* data1=musicModel[index];
+    QString fullPath= data1->getSource();
+    QList<QMediaContent> content;
+    m_favoriteSongs->addMusicFavor (data1);
+    content.push_back(QMediaContent(QUrl::fromLocalFile(fullPath)));
+    playMusicFavorit->addMedia(content);
+    // Kích hoạt sự kiện hoặc thực hiện bất kỳ công việc nào liên quan đến việc cập nhật giao diện
+    emit favoriteSongsChanged();
+}
+void MediaController::setFavoritMusicPlay()
+{
+    player->setPlaylist(playMusicFavorit);
+
+}
+void MediaController::setSourceFavor(QString source)
+{
+    //	m_currentCoverArt=m_favoriteSongs->imageForTag(source);//set source media to get cover art
+
+}
+void MediaController::playFavorit(int index)
+{
+    qDebug()<<"index list"<<index;
+    qDebug()<<"index favor"<<index;
+    playMusicFavorit->setCurrentIndex(index);
+    player->play();
+
 }

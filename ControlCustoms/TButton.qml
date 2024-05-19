@@ -1,6 +1,8 @@
 import QtQuick 2.15
 
 Rectangle{
+    // property alias controllerButton: controllerButton
+    id:controllerButton
     width: 40
     height: 40
     radius: 10
@@ -19,8 +21,14 @@ Rectangle{
     MouseArea {
         anchors.fill: parent
         hoverEnabled: true
-        onPressed: parent.pressed()
-        onReleased: parent.released()
+        onPressed: {
+            controllerButton.scale=0.75
+            parent.pressed()
+        }
+        onReleased: {
+            controllerButton.scale=1
+            parent.released()
+        }
         onEntered: parent.enter()
         onExited: parent.exit()
     }
