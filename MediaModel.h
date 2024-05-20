@@ -101,13 +101,16 @@ public:
     int indexFavor() const;
     Q_INVOKABLE  void setIndexFavor(int newIndexFavor);
     Q_INVOKABLE void addToFavorite(int index);
+    Q_INVOKABLE void addToFavoriteVideo(int index);
     Q_INVOKABLE void setFavoritMusicPlay();
     Q_INVOKABLE void setSourceFavor(QString source);
     Q_INVOKABLE void playFavorit(int index);
     Q_INVOKABLE QString getFavoritTitleArtits(int index);
+    Q_INVOKABLE void deletelMusicFavorit(int index);
 public slots:
 
     void setIndexMediaChanged();
+    void setIndexFavoritMediaChanged();
 signals:
 
 

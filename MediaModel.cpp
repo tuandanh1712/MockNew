@@ -22,7 +22,7 @@ MediaController::MediaController( QObject *parent)
     connect(player,&QMediaPlayer::durationChanged, this, &MediaController::durationChanged);
     connect(playMusicList,&QMediaPlaylist::currentIndexChanged,this,&MediaController::setIndexMediaChanged);
     connect(playVideoList,&QMediaPlaylist::currentIndexChanged,this,&MediaController::setIndexMediaChanged);
-    connect(playMusicFavorit,&QMediaPlaylist::currentIndexChanged,this,&MediaController::setIndexMediaChanged);
+    connect(playMusicFavorit,&QMediaPlaylist::currentIndexChanged,this,&MediaController::setIndexFavoritMediaChanged);
     getMusicLocal();
     getVideoLocal();
 }
@@ -153,7 +153,7 @@ void MediaController::getFolderVideo()
             video->setAlbum(QString::fromStdString(tag->album().to8Bit(true)));
             video->setIndex(i);
             m_videoListModel->addVideoModel(video);
-            // videoModel .push_back(video);
+            videoModel .push_back(video);
             content.push_back(QMediaContent(QUrl::fromLocalFile(fullPath)));
         }
         // m_videoListModel=new ListVideoModel(videoModel);
@@ -191,7 +191,7 @@ QVariantList MediaController::getVideoLocal()
         video->setAlbum(QString::fromStdString(tag->album().to8Bit(true)));
         video->setIndex(i);
         m_videoListModel->addVideoModel(video);
-        // videoModel .push_back(video);
+        videoModel .push_back(video);
     }
     // m_videoListModel=new ListVideoModel(videoModel);
     // m_proxyVideo->setSourceModel(m_videoListModel);
@@ -407,6 +407,21 @@ void MediaController::deletelMusic(int index)
         player->play();
     }
 }
+void MediaController::deletelMusicFavorit(int index)
+{
+    qDebug()<<"index delete"<<index;
+    m_favoriteSongs->removeFavor(index);
+    playMusicFavorit->removeMedia(index);
+    if(playMusicFavorit->currentIndex()==index)
+    {
+        player->stop();
+
+    }
+    else
+    {
+        player->play();
+    }
+}
 
 void MediaController::deletelVideo(int index)
 {
@@ -418,10 +433,21 @@ void MediaController::setIndexMediaChanged()
 {
     setIndex(playMusicList->currentIndex());
     setIndexVideo(playVideoList->currentIndex());
-    setIndexFavor(playMusicFavorit->currentIndex());
+    // setIndexFavor(playMusicFavorit->currentIndex());
     QModelIndex index = m_musicListModel->index(m_index,0);
     QVariant data = m_musicListModel->data(index,m_musicListModel->ListMusicModel::Songs::SourceSongs);
     QString source= data.toString();
+    qDebug()<<"setIndexMediaChanged"<<source;
+    setSource(source);
+}
+
+void MediaController::setIndexFavoritMediaChanged()
+{
+    setIndexFavor(playMusicFavorit->currentIndex());
+    QModelIndex index = m_favoriteSongs->index(m_indexFavor,0);
+    QVariant data = m_favoriteSongs->data(index,m_favoriteSongs->Favorite::Songs::SourceSongs);
+    QString source= data.toString();
+    qDebug()<<"setIndexMediaChangedFavor"<<source;
     setSource(source);
 }
 
@@ -621,9 +647,23 @@ void MediaController::addToFavorite(int index)
     CommonModel* data1=musicModel[index];
     QString fullPath= data1->getSource();
     QList<QMediaContent> content;
+
     m_favoriteSongs->addMusicFavor (data1);
     content.push_back(QMediaContent(QUrl::fromLocalFile(fullPath)));
     playMusicFavorit->addMedia(content);
+    // Kích hoạt sự kiện hoặc thực hiện bất kỳ công việc nào liên quan đến việc cập nhật giao diện
+    emit favoriteSongsChanged();
+}
+void MediaController::addToFavoriteVideo(int index)
+{
+    // Lấy thông tin về bài hát từ index được chọ;
+    CommonModel* data2=videoModel[index];
+    QString fullPath1= data2->getSource();
+    QList<QMediaContent> content1;
+
+    m_favoriteSongs->addMusicFavor (data2);
+    content1.push_back(QMediaContent(QUrl::fromLocalFile(fullPath1)));
+    playVideoList->addMedia(content1);
     // Kích hoạt sự kiện hoặc thực hiện bất kỳ công việc nào liên quan đến việc cập nhật giao diện
     emit favoriteSongsChanged();
 }
@@ -634,7 +674,7 @@ void MediaController::setFavoritMusicPlay()
 }
 void MediaController::setSourceFavor(QString source)
 {
-    //	m_currentCoverArt=m_favoriteSongs->imageForTag(source);//set source media to get cover art
+        // m_currentCoverArt=m_favoriteSongs->imageForTag(source);//set source media to get cover art
 
 }
 void MediaController::playFavorit(int index)

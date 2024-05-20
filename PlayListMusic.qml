@@ -90,7 +90,7 @@ Rectangle{
                             isShowCoverArt=false
                             isFavorit=true
                             mediaCtrl.setFavoritMusicPlay()
-                            mediaCtrl.setSourceFavor(SourceSongs);
+                            mediaCtrl.setSource(SourceSongs);
                             mediaCtrl.playFavorit(index)
                             mediaCtrl.setIndexFavor(index)
                             controllerScreenID.textMusic=mediaCtrl.getFavoritTitleArtits(index)
@@ -124,7 +124,7 @@ Rectangle{
                         width: 20
                         height: 20
                         onPressed:{
-                            // mediaCtrl.deletelMusic(index)
+                            mediaCtrl.deletelMusicFavorit(index)
                         }
 
                     }

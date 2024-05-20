@@ -108,18 +108,70 @@ Rectangle{
                         }
 
                     }
-                    TButton{
-                        id:deleteButton
-                        sourceIC: colorCheck? "qrc:/assets/images/archive-remove-outline.svg":"qrc:/assets/images/archive-remove.svg"
+                    Row{
+                        spacing: 10
+                        anchors.verticalCenter: parent.verticalCenter
                         anchors.right: parent.right
                         anchors.rightMargin: 15
-                        width: 30
-                        height: 30
-                        onPressed:{
-                            mediaCtrl.deletelVideo(index)
+
+                        TButton{
+                            id:addFavoriteButton
+                            sourceIC: "qrc:/assets/images/favorite.png"
+                            width: 20
+                            height: 20
+                            radius: 20
+                            visible: false
+                            onPressed: {
+                                mediaCtrl.addToFavoriteVideo(index);
+                            }
+                        }
+                        TButton{
+                            id:deleteButton
+                            sourceIC: !colorCheck? "qrc:/assets/images/trash.png":"qrc:/assets/images/garbage.png"
+                            width: 20
+                            height: 20
+                            radius: 20
+                            visible: false
+                            onPressed: {
+                                // mediaCtrl.deletelMusic(index)
+                            }
+
+                        }
+                        TButton{
+                            id:hideButton
+
+                            height: 20
+                            width: 20
+                            radius: 10
+
+                            Image{
+                                height: 10
+                                width: 10
+                                source: "qrc:/assets/images/drag_handle_FILL0_wght200_GRAD200_opsz48.png"
+                                anchors.centerIn: parent
+                                fillMode: Image.PreserveAspectFit
+                            }
+                            onPressed: {
+
+                                addFavoriteButton.visible =!addFavoriteButton.visible
+                                deleteButton.visible=!deleteButton.visible
+                            }
+
                         }
 
                     }
+                    // TButton{
+                    //     id:deleteButton
+                    //     sourceIC: colorCheck? "qrc:/assets/images/archive-remove-outline.svg":"qrc:/assets/images/archive-remove.svg"
+                    //     anchors.right: parent.right
+                    //     anchors.rightMargin: 15
+                    //     width: 30
+                    //     height: 30
+                    //     onPressed:{
+                    //         mediaCtrl.deletelVideo(index)
+                    //     }
+
+                    // }
 
                 }
 
