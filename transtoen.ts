@@ -39,5 +39,18 @@
         <source>Video</source>
         <translation>Video</translation>
     </message>
+    <message>
+        <location filename="MenuNavBar.qml" line="117"/>
+        <source>PlayList</source>
+        <translation>PlayList</translation>
+    </message>
+</context>
+<context>
+    <name>PlayListMusic</name>
+    <message>
+        <location filename="PlayListMusic.qml" line="24"/>
+        <source>PLAY LIST</source>
+        <translation>PLAY LIST</translation>
+    </message>
 </context>
 </TS>

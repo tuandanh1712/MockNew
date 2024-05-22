@@ -27,7 +27,7 @@ Rectangle{
                 color: colorMediaScreen
                 Text{
                     id:sectionName
-                    text: qsTr("VIDEO")
+                    text: qsTr("VIDEO")+Translator.updateText
                     font.pointSize: 25
                     anchors.centerIn: parent
                     font.bold: true
@@ -41,16 +41,14 @@ Rectangle{
                 width: titleArea.width-nameArea.width
                 color: colorMediaScreen
                 anchors.right: parent.right
-                    TButton{
-                        id:folderButton
-                        anchors.verticalCenter: parent.verticalCenter
-                        sourceIC: "qrc:/assets/images/folder13.png"
-                        onPressed: {
-                            mediaCtrl.getFolderVideo()
-                        }
+                TButton{
+                    id:folderButton
+                    anchors.verticalCenter: parent.verticalCenter
+                    sourceIC: "qrc:/assets/images/folder13.png"
+                    onPressed: {
+                        mediaCtrl.getFolderVideo()
                     }
-
-
+                }
             }
         }
 
@@ -77,10 +75,11 @@ Rectangle{
                     MouseArea{
                         anchors.fill:parent
                         onClicked: {
-                            listGlobalVideo.currentIndex = index
+                            isFavoritVideo=false
                             isPlaying=true
                             isVideo=true
                             isShowCoverArt=true
+
                             console.log("click video")
                             mediaCtrl.setVideoPlay()
                             mediaCtrl.playVideo(index);
@@ -122,6 +121,7 @@ Rectangle{
                             radius: 20
                             visible: false
                             onPressed: {
+                                isVideo=true
                                 mediaCtrl.addToFavoriteVideo(index);
                             }
                         }
@@ -133,7 +133,7 @@ Rectangle{
                             radius: 20
                             visible: false
                             onPressed: {
-                                // mediaCtrl.deletelMusic(index)
+                                mediaCtrl.deletelVideo(index)
                             }
 
                         }

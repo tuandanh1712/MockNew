@@ -15,14 +15,16 @@ MediaController::MediaController( QObject *parent)
     m_musicListModel=new ListMusicModel;
     m_videoListModel=new ListVideoModel;
     m_favoriteSongs=new Favorite;
+    m_favoritVideos=new Favorite;
+    playFavoritVideoList=new QMediaPlaylist;
     player->setVolume(0);
-
     connect(player, &QMediaPlayer::volumeChanged, this, &MediaController::volumeChanged);
     connect(player, &QMediaPlayer::positionChanged, this, &MediaController::positionChanged);
     connect(player,&QMediaPlayer::durationChanged, this, &MediaController::durationChanged);
     connect(playMusicList,&QMediaPlaylist::currentIndexChanged,this,&MediaController::setIndexMediaChanged);
     connect(playVideoList,&QMediaPlaylist::currentIndexChanged,this,&MediaController::setIndexMediaChanged);
     connect(playMusicFavorit,&QMediaPlaylist::currentIndexChanged,this,&MediaController::setIndexFavoritMediaChanged);
+    connect(playFavoritVideoList,&QMediaPlaylist::currentIndexChanged,this,&MediaController::setIndexMediaChanged);
     getMusicLocal();
     getVideoLocal();
 }
@@ -40,6 +42,8 @@ MediaController::~MediaController()
     delete m_videoListModel;
     delete playMusicFavorit;
     delete m_favoriteSongs;
+    delete m_favoritVideos;
+    delete playFavoritVideoList;
 }
 
 
@@ -67,11 +71,6 @@ void MediaController::getFolderMusic()
         {
             continue;
         }
-        // QString m_source=fullPath.toStdString().c_str();
-        // QString m_title=QString::fromStdString(tag->title().to8Bit(true));
-        // QString m_artist=QString::fromStdString(tag->artist().to8Bit(true));
-        // QString m_album=QString::fromStdString(tag->album().to8Bit(true));
-        // int m_index=i;
         CommonModel* song = new CommonModel;
         song->setSource(fullPath.toStdString().c_str());
         song->setTitle(QString::fromStdString(tag->title().to8Bit(true)));
@@ -156,8 +155,6 @@ void MediaController::getFolderVideo()
             videoModel .push_back(video);
             content.push_back(QMediaContent(QUrl::fromLocalFile(fullPath)));
         }
-        // m_videoListModel=new ListVideoModel(videoModel);
-        // m_proxyVideo->setSourceModel(m_videoListModel);
         playVideoList->addMedia(content);
     }
 }
@@ -193,8 +190,6 @@ QVariantList MediaController::getVideoLocal()
         m_videoListModel->addVideoModel(video);
         videoModel .push_back(video);
     }
-    // m_videoListModel=new ListVideoModel(videoModel);
-    // m_proxyVideo->setSourceModel(m_videoListModel);
     playVideoList->addMedia(content);
     return videoList;
 
@@ -318,16 +313,26 @@ void MediaController::seekBack()
 }
 void MediaController::previousMedia()
 {
-    playMusicList->previous();
+    if(m_isMusicFavorit==false){
+        playMusicList->previous();
+
+    }else{
+        playMusicFavorit->previous();
+    }
     playVideoList->previous();
-    playMusicFavorit->previous();
+    playFavoritVideoList->previous();
 
 }
 void MediaController::nextMedia()
 {
-    playMusicList->next();
+    if(m_isMusicFavorit==false){
+        playMusicList->next();
+
+    }else{
+        playMusicFavorit->next();
+    }
     playVideoList->next();
-    playMusicFavorit->next();
+    playFavoritVideoList->next();
 
 }
 void MediaController::seekForward()
@@ -433,6 +438,7 @@ void MediaController::setIndexMediaChanged()
 {
     setIndex(playMusicList->currentIndex());
     setIndexVideo(playVideoList->currentIndex());
+    setIndexVideoFavor (playFavoritVideoList->currentIndex ());
     // setIndexFavor(playMusicFavorit->currentIndex());
     QModelIndex index = m_musicListModel->index(m_index,0);
     QVariant data = m_musicListModel->data(index,m_musicListModel->ListMusicModel::Songs::SourceSongs);
@@ -494,7 +500,9 @@ void MediaController::shuffleMedia()
     if (playMusicList->isEmpty())
         return;
     playMusicList->setPlaybackMode(QMediaPlaylist::Random);
+    playMusicFavorit->setPlaybackMode(QMediaPlaylist::Random);
     playVideoList->setPlaybackMode(QMediaPlaylist::Random);
+    playFavoritVideoList->setPlaybackMode(QMediaPlaylist::Random);
 }
 void MediaController::notShuffleMedia()
 {
@@ -502,8 +510,12 @@ void MediaController::notShuffleMedia()
         return;
     playMusicList->setPlaybackMode(QMediaPlaylist::Sequential);
     playMusicList->setPlaybackMode(QMediaPlaylist::Loop);
+    playMusicFavorit->setPlaybackMode(QMediaPlaylist::Sequential);
+    playMusicFavorit->setPlaybackMode(QMediaPlaylist::Loop);
     playVideoList->setPlaybackMode(QMediaPlaylist::Sequential);
     playVideoList->setPlaybackMode(QMediaPlaylist::Loop);
+    playFavoritVideoList->setPlaybackMode(QMediaPlaylist::Sequential);
+    playFavoritVideoList->setPlaybackMode(QMediaPlaylist::Loop);
 }
 void MediaController::repeatMedia(int repeatIndex)
 {
@@ -513,16 +525,21 @@ void MediaController::repeatMedia(int repeatIndex)
 
         playMusicList->setPlaybackMode(QMediaPlaylist::Sequential);
         playVideoList->setPlaybackMode(QMediaPlaylist::Sequential);
+        playMusicFavorit->setPlaybackMode(QMediaPlaylist::Sequential);
+        playFavoritVideoList->setPlaybackMode(QMediaPlaylist::Sequential);
     }
     else if(repeatIndex==1)
     {
         playMusicList->setPlaybackMode(QMediaPlaylist::CurrentItemInLoop);
         playVideoList->setPlaybackMode(QMediaPlaylist::CurrentItemInLoop);
+        playMusicFavorit->setPlaybackMode(QMediaPlaylist::CurrentItemInLoop);
+        playFavoritVideoList->setPlaybackMode(QMediaPlaylist::CurrentItemInLoop);
     }
     else if(repeatIndex==2){
         playMusicList->setPlaybackMode(QMediaPlaylist::Loop);
         playVideoList->setPlaybackMode(QMediaPlaylist::Loop);
-
+        playMusicFavorit->setPlaybackMode(QMediaPlaylist::Loop);
+        playFavoritVideoList->setPlaybackMode(QMediaPlaylist::Loop);
     }
 
 }
@@ -656,25 +673,19 @@ void MediaController::addToFavorite(int index)
 }
 void MediaController::addToFavoriteVideo(int index)
 {
-    // Lấy thông tin về bài hát từ index được chọ;
     CommonModel* data2=videoModel[index];
     QString fullPath1= data2->getSource();
+    qDebug()<<"sourceVideo"<<fullPath1;
     QList<QMediaContent> content1;
-
-    m_favoriteSongs->addMusicFavor (data2);
+    m_favoritVideos->addMusicFavor (data2);
     content1.push_back(QMediaContent(QUrl::fromLocalFile(fullPath1)));
-    playVideoList->addMedia(content1);
+    playFavoritVideoList->addMedia(content1);
     // Kích hoạt sự kiện hoặc thực hiện bất kỳ công việc nào liên quan đến việc cập nhật giao diện
-    emit favoriteSongsChanged();
+    emit favoritVideosChanged ();
 }
 void MediaController::setFavoritMusicPlay()
 {
     player->setPlaylist(playMusicFavorit);
-
-}
-void MediaController::setSourceFavor(QString source)
-{
-        // m_currentCoverArt=m_favoriteSongs->imageForTag(source);//set source media to get cover art
 
 }
 void MediaController::playFavorit(int index)
@@ -684,4 +695,95 @@ void MediaController::playFavorit(int index)
     playMusicFavorit->setCurrentIndex(index);
     player->play();
 
+}
+void MediaController::setFavoritVideoPlay()
+{
+    player->setPlaylist(playFavoritVideoList);
+
+}
+
+void MediaController::playFavoritVideo(int index)
+{
+    playFavoritVideoList->setCurrentIndex(index);
+    player->play();
+}
+
+
+
+void MediaController::deletelVideoFavorit(int indexVideo)
+{
+    qDebug()<<"index deletevideoFavor"<<indexVideo;
+    m_favoritVideos->removeFavor(indexVideo);
+    playFavoritVideoList->removeMedia(indexVideo);
+    if(playFavoritVideoList->currentIndex()==indexVideo)
+    {
+        player->stop();
+
+    }
+    else
+    {
+        player->play();
+    }
+}
+QString MediaController::getFavoritVideoTitleArtits(int indexVideo)
+{
+    qDebug()<<"favorit next"<<indexVideo;
+    QModelIndex index= m_favoritVideos->index(indexVideo,0);
+    QVariant data= m_favoritVideos->data(index,m_favoritVideos->Songs::TitleSongs);
+    QVariant data2= m_favoritVideos->data(index,m_favoritVideos->Songs::ArtistSongs);
+    QString tilteSong= data.toString();
+    QString artist= data2.toString();
+    qDebug()<<tilteSong+"-"+artist;
+    return tilteSong+"-"+artist;
+}
+Favorite *MediaController::favoritVideos() const
+{
+    return m_favoritVideos;
+}
+
+void MediaController::setFavoritVideos(Favorite *newFavoritVideos)
+{
+    if (m_favoritVideos == newFavoritVideos)
+        return;
+    m_favoritVideos = newFavoritVideos;
+    emit favoritVideosChanged();
+}
+
+int MediaController::indexVideoFavor() const
+{
+    return m_indexVideoFavor;
+}
+
+void MediaController::setIndexVideoFavor(int newIndexVideoFavor)
+{
+    if (m_indexVideoFavor == newIndexVideoFavor)
+        return;
+    if(newIndexVideoFavor>playFavoritVideoList->mediaCount()-1)
+    {
+
+        m_indexVideoFavor=newIndexVideoFavor-playFavoritVideoList->mediaCount();
+
+    }
+    else if(newIndexVideoFavor<0)
+    {
+        m_indexVideoFavor=newIndexVideoFavor-playFavoritVideoList->mediaCount()-1;
+
+    }
+    else{
+        m_indexVideoFavor = newIndexVideoFavor;
+    }
+    emit indexVideoFavorChanged();
+}
+
+bool MediaController::isMusicFavorit() const
+{
+    return m_isMusicFavorit;
+}
+
+void MediaController::setIsMusicFavorit(bool newIsMusicFavorit)
+{
+    if (m_isMusicFavorit == newIsMusicFavorit)
+        return;
+    m_isMusicFavorit = newIsMusicFavorit;
+    emit isMusicFavoritChanged();
 }

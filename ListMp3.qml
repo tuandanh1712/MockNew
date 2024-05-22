@@ -137,6 +137,8 @@ Rectangle{
                             isPlaying=true
                             isVideo=false
                             isShowCoverArt=false
+                            isFavoritMusic=false
+                            mediaCtrl.isMusicFavorit=false
                             mediaCtrl.setMusicPlay()
                             mediaCtrl.setSource(SourceSongs)
                             mediaCtrl.playMusic(index)
@@ -176,6 +178,7 @@ Rectangle{
                             radius: 20
                             visible: false
                             onPressed: {
+                                isVideo=false
                                 mediaCtrl.addToFavorite(index);
                             }
                         }

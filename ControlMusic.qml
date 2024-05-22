@@ -177,14 +177,20 @@ Rectangle{
                     onPressed: {
                         mediaCtrl.previousMedia()
                         if(isVideo){
-                            controllerScreenID.textVideo=mediaCtrl.getVideoTitleArtist(mediaCtrl.indexVideo)
+                            if(isFavoritVideo){
+                                console.log("title Favorit",mediaCtrl.getFavoritVideoTitleArtits(mediaCtrl.indexVideoFavor))
+                                controllerScreenID.textVideo=mediaCtrl.getFavoritVideoTitleArtits(mediaCtrl.indexVideoFavor)
+                            }else{
+                                console.log("title video",mediaCtrl.getVideoTitleArtist(mediaCtrl.indexVideo))
+                                controllerScreenID.textVideo=mediaCtrl.getVideoTitleArtist(mediaCtrl.indexVideo)
+                            }
 
                         }else {
-                            if(isFavorit){
-                                console.log("d",mediaCtrl.indexFavor)
+                            if(isFavoritMusic){
+                                console.log("title Favorit",mediaCtrl.getFavoritTitleArtits(mediaCtrl.indexFavor))
                                 controllerScreenID.textMusic=mediaCtrl.getFavoritTitleArtits(mediaCtrl.indexFavor);
                             }else{
-
+                                console.log("title SOng",mediaCtrl.getMusicTitleArtist(mediaCtrl.index))
                                 controllerScreenID.textMusic=mediaCtrl.getMusicTitleArtist(mediaCtrl.index)
                             }
 
@@ -211,14 +217,20 @@ Rectangle{
                     onPressed: {
                         mediaCtrl.nextMedia()
                         if(isVideo){
-                            controllerScreenID.textVideo=mediaCtrl.getVideoTitleArtist(mediaCtrl.indexVideo)
+                            if(isFavoritVideo){
+                                console.log("title Favorit",mediaCtrl.getFavoritVideoTitleArtits(mediaCtrl.indexVideoFavor))
+                                controllerScreenID.textVideo=mediaCtrl.getFavoritVideoTitleArtits(mediaCtrl.indexVideoFavor)
+                            }else{
+                                console.log("title video",mediaCtrl.getVideoTitleArtist(mediaCtrl.indexVideo))
+                                controllerScreenID.textVideo=mediaCtrl.getVideoTitleArtist(mediaCtrl.indexVideo)
+                            }
 
                         }else {
-                            if(isFavorit){
-                                console.log("d",mediaCtrl.indexFavor)
+                            if(isFavoritMusic){
+                                console.log("title Favorit",mediaCtrl.getFavoritTitleArtits(mediaCtrl.indexFavor))
                                 controllerScreenID.textMusic=mediaCtrl.getFavoritTitleArtits(mediaCtrl.indexFavor);
                             }else{
-
+                                console.log("title SOng",mediaCtrl.getMusicTitleArtist(mediaCtrl.index))
                                 controllerScreenID.textMusic=mediaCtrl.getMusicTitleArtist(mediaCtrl.index)
                             }
 

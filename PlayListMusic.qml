@@ -3,29 +3,29 @@ import QtQuick.Controls 2.15
 import "ControlCustoms"
 
 
-
 Rectangle{
-    id:musicScreen
+    id:playListScreen
     width: musicScreenID.width
     height: musicScreenID.height
     color: colorMediaScreen
     Column{
         Rectangle{
             id:titleArea
-            width: musicScreen.width
+            width: playListScreen.width
             height:100
             color: colorMediaScreen
             Rectangle{
                 id:nameArea
                 height: titleArea.height
-                width: 300
+                width: 200
                 color: colorMediaScreen
                 Text{
                     id:textHome
-                    text: qsTr("PLAY LIST")
+                    text: qsTr("PLAY LIST")+Translator.updateText
                     font.pointSize: 25
                     anchors.centerIn: parent
-                    font.family:"Tahoma"
+                    // font.family:"Tahoma"
+                    font.bold: true
                     color: colorText
 
                 }
@@ -35,32 +35,19 @@ Rectangle{
         Rectangle
         {
             id:content
-            width: musicScreen.width
-            height:musicScreen.height-titleArea.height
+            width: playListScreen.width
+            height:playListScreen.height-titleArea.height
             color: colorMediaScreen
             clip: true
             ListView
             {
-                spacing: 5
                 id:listGlobal
+                spacing: 5
                 height: content.height
                 width: content.width
-                currentIndex: -1
-                visible: true
-                ScrollBar.vertical: ScrollBar {
-                    visible: true
-                    contentItem: Item {
-                        implicitWidth: 7
-                        implicitHeight: 5
-                        Rectangle {
-                            color: "#8b9dc3"
-                            anchors.fill: parent
-                            radius: 5
 
-                        }
-                    }
-                }
-                model:mediaCtrl.favoriteSongs
+                visible: true
+                model: isVideo==false? mediaCtrl.favoriteSongs:mediaCtrl.favoritVideos
                 delegate:
                     Rectangle{
 
@@ -84,17 +71,25 @@ Rectangle{
                             listRect.color=colorListView
                         }
                         onClicked: {
-                            listGlobal.currentIndex = index
-                            isPlaying=true
-                            isVideo=false
-                            isShowCoverArt=false
-                            isFavorit=true
-                            mediaCtrl.setFavoritMusicPlay()
-                            mediaCtrl.setSource(SourceSongs);
-                            mediaCtrl.playFavorit(index)
-                            mediaCtrl.setIndexFavor(index)
-                            controllerScreenID.textMusic=mediaCtrl.getFavoritTitleArtits(index)
-
+                            if(isVideo==false){
+                                isPlaying=true
+                                isVideo=false
+                                isShowCoverArt=false
+                                isFavoritMusic=true
+                                mediaCtrl.isMusicFavorit=true
+                                mediaCtrl.setFavoritMusicPlay()
+                                mediaCtrl.setSource(SourceSongs);
+                                mediaCtrl.playFavorit(index)
+                                mediaCtrl.setIndexFavor(index)
+                                controllerScreenID.textMusic=mediaCtrl.getFavoritTitleArtits(index)
+                            }else{
+                                isFavoritVideo=true
+                                mediaCtrl.setFavoritVideoPlay()
+                                mediaCtrl.playFavoritVideo(index);
+                                mediaCtrl.setIndexVideoFavor(index);
+                                loader.active=false
+                                controllerScreenID.textVideo=mediaCtrl.getFavoritVideoTitleArtits(index)
+                            }
 
                         }
                     }
@@ -124,7 +119,12 @@ Rectangle{
                         width: 20
                         height: 20
                         onPressed:{
-                            mediaCtrl.deletelMusicFavorit(index)
+                            if(isVideo==false){
+                                mediaCtrl.deletelMusicFavorit(index)
+
+                            }else{
+                                mediaCtrl.deletelVideoFavorit(index)
+                            }
                         }
 
                     }

@@ -95,12 +95,12 @@
         <file>assets/images/video_library.png</file>
         <file>assets/images/volume_off.png</file>
         <file>assets/images/volume_up.png</file>
-        <file>assets/language/transen.qm</file>
-        <file>assets/language/transen.ts</file>
-        <file>assets/language/transvn.qm</file>
-        <file>assets/language/transvn.ts</file>
         <file>assets/images/menu12.png</file>
         <file>assets/images/stack.png</file>
         <file>PlayListMusic.qml</file>
+        <file>assets/language/transtoen.qm</file>
+        <file>assets/language/transtoen.ts</file>
+        <file>assets/language/transtovn.qm</file>
+        <file>assets/language/transtovn.ts</file>
     </qresource>
 </RCC>

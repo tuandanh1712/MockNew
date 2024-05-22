@@ -31,8 +31,8 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-TRANSLATIONS += transvn.ts\
-             += transen.ts
+TRANSLATIONS += transtovn.ts\
+             += transtoen.ts
 HEADERS += \
     CommonModel.h \
     Favorite.h \
@@ -41,5 +41,7 @@ HEADERS += \
     MediaModel.h \
     Translator.h
 
-DISTFILES +=
+DISTFILES += \
+    transtoen.ts \
+    transtovn.ts
 

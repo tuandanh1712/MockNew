@@ -14,7 +14,8 @@ Window{
     // property bool isShowCoverArt: false
     property bool statusVolume: false
     property bool isVideo: false
-    property bool isFavorit: false
+    property bool isFavoritMusic: false
+    property bool isFavoritVideo: false
     property bool isShuffle: false
     property bool colorCheck: false
     property string colorMenuScreen: colorCheck?"#333333":"#dfe3ee"
@@ -54,12 +55,5 @@ Window{
             anchors.fill: musicScreenID
         }
     }
-    // FontLoader
-    // {
-    //     id: fontAwesomeFontLoader
-    //     source: "qrc:/assets/fonts/fontawesome.otf"
-    // }
-
-
 
 }
